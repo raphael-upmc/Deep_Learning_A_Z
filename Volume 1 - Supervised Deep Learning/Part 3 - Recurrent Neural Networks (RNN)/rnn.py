@@ -1,3 +1,5 @@
+#! /Users/raphael/anaconda3/bin/python
+
 # Recurrent Neural Network
 
 
@@ -8,6 +10,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import sys
 
 # Importing the training set
 dataset_train = pd.read_csv('Google_Stock_Price_Train.csv')
@@ -25,9 +28,14 @@ for i in range(60, 1258):
     X_train.append(training_set_scaled[i-60:i, 0])
     y_train.append(training_set_scaled[i, 0])
 X_train, y_train = np.array(X_train), np.array(y_train)
+print(X_train.shape)
 
-# Reshaping ==> ???
-X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
+
+# Reshaping ==> add dimension to the numpy array
+X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1)) # adding a third dimension for the number of indicators we want, indicators will help for the prediction (Apple / Samsung) ==> open google stock pile
+print(X_train.shape)
+
+
 
 
 
@@ -39,8 +47,16 @@ from keras.layers import Dense
 from keras.layers import LSTM
 from keras.layers import Dropout
 
+
+
+
+
+
 # Initialising the RNN
 regressor = Sequential()
+
+
+
 
 # Adding the first LSTM layer and some Dropout regularisation
 regressor.add(LSTM(units = 50, return_sequences = True, input_shape = (X_train.shape[1], 1)))
@@ -64,8 +80,10 @@ regressor.add(Dense(units = 1))
 # Compiling the RNN
 regressor.compile(optimizer = 'adam', loss = 'mean_squared_error')
 
+
 # Fitting the RNN to the Training set
 regressor.fit(X_train, y_train, epochs = 100, batch_size = 32)
+
 
 
 
@@ -96,3 +114,6 @@ plt.xlabel('Time')
 plt.ylabel('Google Stock Price')
 plt.legend()
 plt.show()
+
+
+sys.exit()
